@@ -40,7 +40,7 @@ async function startAnimation(){
 
 async function checkUpdate(){
   if(Dev) return javaCheck();
-  
+  nw.App.clearCache();
   setStatus(`Recherche de mises à jour`);
   const manifest = await fetch(manifestUrl).then(res => res.json());
   const update = await updater.checkNewVersion(manifest);
@@ -104,7 +104,7 @@ async function javaCheck(){
           var url = java.jre8.linux.url
         }
       }
-      if(!fs.existsSync(dataDirectory + "/" + res.dataDirectory + "/runtime/java/")) {
+      if(!fs.existsSync(dataDirectory + "/" + res.dataDirectory + "/runtime/java")) {
         const downloader = new Downloader({
           url: url,
           directory: dataDirectory + "/" + res.dataDirectory + "/runtime/",
@@ -147,9 +147,9 @@ async function javaCheck(){
 function startLauncher(){
   setStatus(`Démarrage du launcher`);
   nw.Window.open("app/launcher.html", {
-    "title": "Arche Launcher",
-    "width": 980,
-    "height": 552,
+    "title": "Uzurion Launcher",
+    "width": 1280,
+    "height": 720,
     "min_width": 980,
     "min_height": 552,
     "frame": (process.platform == "win32") ? false : true,

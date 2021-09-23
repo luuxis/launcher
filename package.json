@@ -1,38 +1,37 @@
 {
-  "name": "Arche-Launcher",
-  "version": "1.0.5",
-  "productName": "Arche Launcher",
-  "description": "Arche Launcher",
+  "name": "Uzurion-Launcher",
+  "version": "2.0.0",
+  "productName": "Uzurion Launcher",
+  "description": "Uzurion Launcher",
   "main": "app/index.html",
   "author": "Luuxis",
   "window": {
-    "title": "Arche update",
+    "title": "Uzurion update",
     "width": 400,
     "height": 500,
     "frame": false,
     "resizable": false,
     "position": "center",
-    "transparent": true,
-    "icon": "app/assets/images/icon/icon.png"
+    "icon": "app/assets/images/icons/icon.png"
   },
   "chromium-args": "--enable-logging --v=1 --disable-gpu",
-  "url": "http://launcheur.arche-rp.fr/web",
+  "url": "http://146.59.227.140",
   "user": "",
   "webkit": {
     "plugin": true
   },
   "scripts": {
-    "start": "run --64 --mirror https://npm.taobao.org/mirrors/nwjs/ .",
+    "start": "run --64 --mirror https://dl.nwjs.io/ .",
     "server": "npm install && node node_modules/emc-core-luuxis/utils/builder.js --v=1.0",
-    "build:win": "npm install && build --win --x64 --mirror https://npm.taobao.org/mirrors/nwjs/ .",
-    "build:mac": "npm install && build --mac --x64 --mirror https://npm.taobao.org/mirrors/nwjs/ .",
-    "build:linux": "npm install && build --linux --x64 --mirror https://npm.taobao.org/mirrors/nwjs/ .",
+    "build:win": "npm install && build --win --x64 --mirror https://dl.nwjs.io/ .",
+    "build:mac": "npm install && build --mac --x64 --mirror https://dl.nwjs.io/ .",
+    "build:linux": "npm install && build --linux --x64 --mirror https://dl.nwjs.io/ .",
     "build:all": "npm run build:linux && npm run build:mac && npm run build:win"
   },
-  "license": "MIT",
+  "license": "CC0",
   "build": {
-    "appId": "Arche Launcher",
-    "nwVersion": "0.56.0",
+    "appId": "Uzurion Launcher",
+    "nwVersion": "0.55.0",
     "packed": true,
     "targets": [
       "zip",
@@ -54,18 +53,16 @@
     ],
     "outputPattern": "${NAME}-${VERSION}-${PLATFORM}",
     "win": {
-      "productName": "Arche Launcher",
-      "companyName": "Arche Launcher",
+      "productName": "Uzurion Launcher",
+      "companyName": "Uzurion Launcher",
       "copyright": "copyright",
-      "icon": "./app/assets/images/icon/icon.ico"
+      "icon": "./app/assets/images/icons/icon.ico"
     },
     "mac": {
-      "displayName": "Arche-Launcher",
+      "displayName": "Uzurion-Launcher",
       "copyright": "copyright",
-      "icon": "./app/assets/images/icon/icon.icns",
       "plistStrings": {
-        "CFBundleIdentifier": "Arche-Launcher",
-        "CFBundleDocumentTypes": []
+        "CFBundleIdentifier": "Uzurion-Launcher"
       }
     },
     "nsis": {
@@ -76,28 +73,18 @@
   "devDependencies": {
     "nwjs-builder-luuxis": "^1.15.0"
   },
-  "dependencies": {
-    "adm-zip": "^0.4.16",
-    "cheerio": "^1.0.0-rc.3",
-    "compressjs": "^1.0.2",
-    "decompress": "^4.2.1",
-    "emc-core-luuxis": "^1.0.9",
-    "fs": "0.0.1-security",
-    "gbxremote": "^0.2.1",
-    "got": "^11.5.1",
-    "iconv-lite": "^0.6.2",
-    "long": "^4.0.0",
-    "minimist": "^1.2.5",
-    "moment": "^2.27.0",
-    "node-fetch": "^2.6.1",
-    "nodejs-file-downloader": "^4.7.1",
-    "nw-autoupdater-luuxis": "^1.1.5",
-    "punycode": "^2.1.1",
-    "varint": "^5.0.0",
-    "xml-js": "^1.6.11"
-  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/luuxis/Arche-Launcher.git"
+    "url": "git+https://github.com/luuxis/Uzurion-Launcher.git"
+  },
+  "dependencies": {
+    "decompress": "^4.2.1",
+    "emc-core-luuxis": "^1.0.9",
+    "fs-extra": "^10.0.0",
+    "gamedig": "^3.0.7",
+    "msmc": "^2.2.1",
+    "node-fetch": "^2.6.1",
+    "nodejs-file-downloader": "^4.7.3",
+    "nw-autoupdater-luuxis": "^1.1.6"
   }
 }

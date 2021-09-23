@@ -1,49 +1,95 @@
-const { config, microsoft } = require('./assets/js/utils.js');
-const { Authenticator } = require('minecraft-launcher-core');
-const fs = require("fs")
+const fs = require("fs");
+const msmc = require("msmc");
+const { Authenticator } = require('minecraft-launcher-core')
 const dataDirectory = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.env.HOME)
+const { config } = require('./assets/js/utils.js');
+let win = nw.Window.get()
 
+if(process.platform == "win32") {
+  document.querySelector(".frame").classList.toggle("hide")
+  document.querySelector(".dragbar").classList.toggle("hide")
+  
+  document.querySelector("#minimize").addEventListener("click", () => {
+    win.minimize()
+  });
 
-function isonline(){
-  config.isonline().then(online => {
-    if (online) {
-      console.log("Loading online login \(officiel login\)");
-      window.location.href = "./panels/login-online.html"
-    } else {
-      console.log("Loading offline login \(crack login\)");
-      window.location.href = "./panels/login-offline.html"
-    }
+  let maximized = false;
+  let maximize = document.querySelector("#maximize")
+  maximize.addEventListener("click", () => {
+    if(maximized) win.unmaximize()
+    else win.maximize()
+    maximized = !maximized
+    maximize.classList.toggle("icon-maximize")
+    maximize.classList.toggle("icon-restore-down")
+  });
+
+  document.querySelector("#close").addEventListener("click", () => {
+    win.close();
   })
 }
 
+function changePanel(V1, V2){
+  if(V1 == ""){
+    document.querySelector(`.${V2}`).style.display = "block"
+  } else if (V1 == "login"){
+    document.querySelector(`.${V1}`).style.display = "none"
+    document.querySelector(`.${V2}`).style.display = "block"
+    document.querySelector(".login-btn").disabled = false
+    document.querySelector(".pseudo").disabled = false
+    document.querySelector(".microsoft-btn").disabled = false
+    document.querySelector(".password").disabled = false
+  } else {
+    document.querySelector(`.${V1}`).style.display = "none"
+    document.querySelector(`.${V2}`).style.display = "block"
+  }
+}
+
+(function(...panels){
+  let panelsElem = document.querySelector("#panels")
+  for(let panel of panels){
+    console.log(`Initializing ${panel} Panel...`)
+    let div = document.createElement("div")
+    div.classList.add("panel", panel)
+    div.innerHTML = fs.readFileSync(`app/panels/${panel}.html`, "utf8")
+    panelsElem.appendChild(div);
+    import (`./panels/${panel}.js`)
+  }
+})('login', 'home', 'settings')
+
 
 config.config().then(config => {
-  if(fs.existsSync(dataDirectory + "/" + config.dataDirectory + "/account.json")) {
-    let rawData = fs.readFileSync(dataDirectory + "/" + config.dataDirectory + "/account.json")
+  if(fs.existsSync(dataDirectory + "/" + config.dataDirectory + "/config.json")) {
+    let rawData = fs.readFileSync(dataDirectory + "/" + config.dataDirectory + "/config.json")
     let json = JSON.parse(rawData);
     
-    if (!json.user || !json.user.type){
-      isonline()
-    } else if((json.user.type)  == "mojang") {
-      Authenticator.validate(json.user.access_token, json.user.client_token).then(user => {
-        window.location.href = "./panels/home.html";
+    if ((json.Login.UserConnect) === null){
+      changePanel("", "login")
+
+    } else if(json.Login.UserConnect == "Mojang") {
+      if (!json.Login.Account || !json.Login.Account.Mojang || !json.Login.Account.Mojang.User || !json.Login.Account.Mojang.User.access_token || !json.Login.Account.Mojang.User.client_token) changePanel("", "login")
+      Authenticator.validate(json.Login.Account.Mojang.User.access_token, json.Login.Account.Mojang.User.client_token).then(user => {
+        changePanel("", "home")
       }).catch (err => {
-        isonline()
+        changePanel("", "login")
       })
-    } else if ((json.user.type)  == "offline") {
-      Authenticator.getAuth(json.user.pseudo).then(user => {
-        window.location.href = "./panels/home.html";
+
+    } else if (json.Login.UserConnect == "Crack") {
+      if (!json.Login.Account || !json.Login.Account.Crack || !json.Login.Account.Crack.User || !json.Login.Account.Crack.User.name) changePanel("", "login")
+      Authenticator.getAuth(json.Login.Account.Crack.User.name).then(user => {
+        changePanel("", "home")
       }).catch (err => {
-        isonline()
+        changePanel("", "login")
       })
-    } else if ((json.user.type)  == "xbox") {
-      account = microsoft.getMLC().getAuth(json.user.call).then(user => {
-        window.location.href = "./panels/home.html";
+
+    } else if (json.Login.UserConnect == "Microsoft") {
+      if (!json.Login.Account || !json.Login.Account.Microsoft || !json.Login.Account.Microsoft.User) changePanel("", "login")
+      msmc.getMCLC().validate(json.Login.Account.Microsoft.User).then(user => {
+        changePanel("", "home")
       }).catch (err => {
-        isonline()
+        changePanel("", "login")
       })
     }
   } else {
-    isonline()
+    changePanel("", "login")
   }
 })
